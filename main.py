@@ -1,26 +1,18 @@
-import pygame
-from pygame.locals import *
 import sys
-import random
-from tkinter import filedialog
-from tkinter import *
-
-from model.game import Game
+import pygame
 
 pygame.init()
 
-# Declare variable config
-vec = pygame.math.Vector2
-HEIGHT = 350
-WIDTH = 700
-ACC = 0.3
-FRIC = -0.10
-FPS = 60
-FPS_CLOCK = pygame.time.Clock()
-COUNT = 0
+pygame.display.set_caption("C")
+screen = pygame.display.set_mode((640, 480))
 
-display_surface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Crystal and Dragons: The Firewing Legacy")
+clock = pygame.time.Clock()
 
-game = Game()
-game.run()
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+    
+    pygame.display.update()
+    clock.tick(60)
