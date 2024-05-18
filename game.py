@@ -43,7 +43,7 @@ class Game:
 
 
             # UI assets
-            'button_inventory': load_image('ui/Play Rect.png'),
+            'button_inventory': load_image('ui/tas.png', color_key=(255,255,255), convert_alpha=True),
 
             # Particle assets
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False)
@@ -66,14 +66,12 @@ class Game:
 
         self.scroll = [0,0]
 
-        self.img = pygame.transform.scale(self.assets['button_inventory'], (100, 50))
-        self.inv_button = Button(image=self.img, pos=(self.display.get_width() - 50, self.display.get_height() - 25), 
-                                text_input="Iventory", font=self.get_font(10), base_color="#d7fcd4", hovering_color="White")
+        self.inv_button = Button(image=self.assets['button_inventory'], pos=(self.display.get_width() - 20, self.display.get_height() - 25), 
+                                text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White")
 
     def options(self):
         while True:
             OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
-
 
             self.screen.fill("white")
 
@@ -96,16 +94,6 @@ class Game:
                         self.run()
 
             pygame.display.update()      
-
-    def mainmenu(self):
-        screen_size = (1280, 720)
-
-        SCREEN = pygame.display.set_mode(screen_size)
-        pygame.display.set_caption("Menu")
-
-        BG = pygame.image.load("data/images/ui/bg-menu.png")
-        BG = pygame.transform.scale(BG, screen_size)
-
 
     def get_font(self,size): # Returns Press-Start-2P in the desired size
         return pygame.font.Font("data/images/ui/font.ttf", size)
@@ -140,20 +128,47 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.game_on()
-                    if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.options()
-                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        pygame.quit()
-                        sys.exit()
+                    if pygame.mouse.get_pressed()[0]:
+                        if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.game_on()
+                        if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.options()
+                        if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            pygame.quit()
+                            sys.exit()
 
             pygame.display.update()
             self.clock.tick(60)
 
     def invetory(self):
         while True:
-            inv = pygame.image.load("data/images/ui/copper_hud.png")
+            INV = pygame.image.load("data/images/ui/copper_hud.png")
+            INV = pygame.transform.scale(INV, (1280, 720))
+        
+            INV_TEXT = self.get_font(25).render("Inventory", True, "#dbdbdb")
+            INV_RECT = INV_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+
+            self.screen.blit(INV, (0, 0))
+            self.screen.blit(INV_TEXT, INV_RECT)
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            PLAY_BUTTON = Button(image=None, pos=(self.screen.get_rect().width - 250 ,620), 
+                                text_input="RESUME", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+
+            for button in [PLAY_BUTTON]:
+                button.changeColor(MENU_MOUSE_POS)
+                button.update(self.screen)
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.game_on()
+
+            pygame.display.update()
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
@@ -209,8 +224,9 @@ class Game:
                     if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         self.movement[1] = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    if self.inv_button.checkForInput(scaled_pos):
-                        print("AWKOWAKOAW")
+                    if pygame.mouse.get_pressed()[0]:
+                        if self.inv_button.checkForInput(scaled_pos):
+                            self.invetory()
 
             
             self.inv_button.update(self.display)
