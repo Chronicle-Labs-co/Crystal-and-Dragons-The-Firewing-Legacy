@@ -197,16 +197,16 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = True
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT  or event.key == pygame.K_d:
                         self.movement[1] = True
-                    if event.key == pygame.K_UP:
+                    if event.key == pygame.K_UP  or event.key == pygame.K_w:
                         self.player.jump()
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = False
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         self.movement[1] = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if self.inv_button.checkForInput(scaled_pos):
@@ -220,4 +220,4 @@ class Game:
             # self.screen.blit(self.display, (0,0))
             pygame.display.update()
 
-            self.clock.tick(60)
+            self.clock.tick(75)
