@@ -118,7 +118,7 @@ class Game:
                                 text_input="QUIT", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
-
+            
             for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
@@ -138,6 +138,7 @@ class Game:
                             sys.exit()
 
             pygame.display.update()
+            self.clock.tick(60)
 
     def invetory(self):
         while True:
@@ -211,16 +212,16 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = True
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT  or event.key == pygame.K_d:
                         self.movement[1] = True
-                    if event.key == pygame.K_UP:
-                        self.player.velocity[1] = -3
+                    if event.key == pygame.K_UP  or event.key == pygame.K_w:
+                        self.player.jump()
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = False
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         self.movement[1] = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]:
@@ -235,4 +236,4 @@ class Game:
             # self.screen.blit(self.display, (0,0))
             pygame.display.update()
 
-            self.clock.tick(60)
+            self.clock.tick(75)
