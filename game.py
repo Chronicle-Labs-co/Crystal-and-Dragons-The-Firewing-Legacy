@@ -139,36 +139,54 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(60)
-
+#ini merupakan ui inventory
     def invetory(self):
         while True:
             INV = pygame.image.load("data/images/ui/copper_hud.png")
             INV = pygame.transform.scale(INV, (1280, 720))
-        
             INV_TEXT = self.get_font(25).render("Inventory", True, "#dbdbdb")
             INV_RECT = INV_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
 
             self.screen.blit(INV, (0, 0))
             self.screen.blit(INV_TEXT, INV_RECT)
+
             MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-            PLAY_BUTTON = Button(image=None, pos=(self.screen.get_rect().width - 250 ,620), 
-                                text_input="RESUME", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
-
-            for button in [PLAY_BUTTON]:
-                button.changeColor(MENU_MOUSE_POS)
-                button.update(self.screen)
+            RESUME_BUTTON = Button(image=None, pos=(self.screen.get_rect().width - 250 ,620), text_input="RESUME", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            RESUME_BUTTON.changeColor(MENU_MOUSE_POS)
+            RESUME_BUTTON.update(self.screen)
             
+            box_image = pygame.image.load("data/images/ui/itembox.png")
+            box_image = pygame.transform.scale(box_image, (150,150))
+
+            char_inv = pygame.image.load("data/images/entities/player/idle/00.png")
+            char_inv = pygame.transform.scale(char_inv, (200,350))
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]:
-                        if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                        if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
                             self.game_on()
 
+            self.screen.blit(char_inv, (150,150))
+
+            for row in range(3):
+                for col in range(5):
+                    if col == 0:
+                        x = 400 + col * (150 + 0)
+                        y = 130 + row * (150 + 0)
+                        self.screen.blit(box_image, (x, y))
+                    else:
+                        x = 450 + col * (150 + 0)
+                        y = 130 + row * (150 + 0)
+                        self.screen.blit(box_image, (x, y))
+
             pygame.display.update()
+
+#ini merpakana UI trainer
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
