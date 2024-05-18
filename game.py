@@ -130,7 +130,7 @@ class Game:
                                 text_input="QUIT", font=self.get_font(75), base_color="#d7fcd4", hovering_color="White")
 
             self.screen.blit(MENU_TEXT, MENU_RECT)
-
+            
             for button in [PLAY_BUTTON, OPTIONS_BUTTON, QUIT_BUTTON]:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
@@ -149,6 +149,7 @@ class Game:
                         sys.exit()
 
             pygame.display.update()
+            self.clock.tick(60)
 
     def invetory(self):
         while True:
