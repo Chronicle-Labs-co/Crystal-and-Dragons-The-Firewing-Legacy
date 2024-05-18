@@ -140,7 +140,7 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
 #ini merupakan ui inventory
-    def invetory(self):
+    def inventory(self):
         while True:
             INV = pygame.image.load("data/images/ui/copper_hud.png")
             INV = pygame.transform.scale(INV, (1280, 720))
@@ -187,6 +187,78 @@ class Game:
             pygame.display.update()
 
 #ini merpakana UI trainer
+    def trainer(self):
+        while True:
+            # Load and scale images
+            Train = pygame.image.load("data/images/ui/copper_hud.png")
+            Train = pygame.transform.scale(Train, (1280, 720))
+            Train_TEXT = self.get_font(25).render("Trainer", True, "#dbdbdb")
+            Train_RECT = Train_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+
+            self.screen.blit(Train, (0, 0))
+            self.screen.blit(Train_TEXT, Train_RECT)
+
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            #character
+            trainer_char = pygame.image.load("data/images/entities/NPC/Trainer/idle/Warrior_Idle_1.png")
+            trainer_char = pygame.transform.scale(trainer_char, (512,352))
+
+            # Create and render the upgrade button as text-only
+            upgrade_button = Button(image=None, pos=(1050, 600), text_input="UPGRADE", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            upgrade_button.changeColor(MENU_MOUSE_POS)
+            upgrade_button.update(self.screen)
+
+            #weapon
+            weapon_box_image = pygame.image.load("data/images/ui/itembox.png")
+            weapon_box_image = pygame.transform.scale(weapon_box_image, (150, 150))
+
+            #arrow_left_image = pygame.image.load("data/images/ui/arrow_left.png")
+            #arrow_right_image = pygame.image.load("data/images/ui/arrow_right.png")
+            coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
+            coin_image = pygame.transform.scale(coin_image, (100, 100))
+            #self.screen.blit(bg_image, (0, 0))
+            
+            
+            # Render weapon slots
+            for i in range(4):
+                x = 550 + i * 150
+                y = 150
+                self.screen.blit(weapon_box_image, (x, y))
+
+            # Render selected weapon slot
+            self.screen.blit(weapon_box_image, (550, 350))
+            
+            # Render weapon stats
+            weapon_name = self.get_font(20).render("Pedank", True, (0, 0, 0))
+            weapon_damage = self.get_font(20).render("Damage: 126 + 15", True, (0, 0, 0))
+            weapon_level = self.get_font(20).render("Level: 4 + 1", True, (0, 0, 0))
+            self.screen.blit(weapon_name, (715, 360))
+            self.screen.blit(weapon_damage, (715, 390))
+            self.screen.blit(weapon_level, (715, 420))
+
+            # Render arrows
+            #self.screen.blit(arrow_left_image, (450, 225))
+            #self.screen.blit(arrow_right_image, (950, 225))
+
+            # Render coins and upgrade button
+            self.screen.blit(coin_image, (825, 550))
+            coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
+            self.screen.blit(coin_amount, (850, 640))
+            
+            self.screen.blit(trainer_char, (100,200))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if upgrade_button.checkForInput(MENU_MOUSE_POS):
+                            print("Upgraded")
+
+
+            pygame.display.update()
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
