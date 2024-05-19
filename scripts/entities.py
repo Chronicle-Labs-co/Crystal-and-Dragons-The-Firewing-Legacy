@@ -157,8 +157,8 @@ class Player(PhysicsEntity):
             if not self.wall_slide and not self.game.dead:
                 self.game.dead += 1
             else:
-                if self.game.health > 1:
-                    self.game.health -= 1
+                if self.game.player_hp > 1:
+                    self.game.player_hp -= 1
                     self.air_time = 0
                 else:
                     self.game.dead += 1
