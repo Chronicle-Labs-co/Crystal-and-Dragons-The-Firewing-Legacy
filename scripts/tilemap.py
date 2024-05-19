@@ -42,18 +42,18 @@ class Tilemap:
                 if not keep:
                     self.offgrid_tiles.remove(tile)
         
-        for loc in self.tilemap:
+        for loc in list(self.tilemap):  # Buat salinan dari kunci-kunci dictionary
             tile = self.tilemap[loc]
             if (tile['type'], tile['variant']) in id_pairs:
                 matches.append(tile.copy())
                 matches[-1]['pos'] = matches[-1]['pos'].copy()
                 matches[-1]['pos'][0] *= self.tile_size
                 matches[-1]['pos'][1] *= self.tile_size
-            
-            if not keep:
-                del self.tilemap[loc]
-        
+                if not keep:
+                    del self.tilemap[loc] # Tambahkan kunci yang ingin dihapus ke daftar
+
         return matches
+
     
     def save(self, path):
         f = open(path, 'w')
@@ -68,6 +68,12 @@ class Tilemap:
         self.tilemap = map_data['tilemap']
         self.tile_size = map_data['tile_size']
         self.offgrid_tiles = map_data['offgrid']
+    
+    def solid_check(self, pos):
+        tile_loc = str(int(pos[0] // self.tile_size)) + ';' + str(int(pos[1] // self.tile_size))
+        if tile_loc in self.tilemap:
+            if self.tilemap[tile_loc]['type'] in PHYSICS_TILES:
+                return self.tilemap[tile_loc]
     
     def physics_rects_around(self, pos):
         rects = []
