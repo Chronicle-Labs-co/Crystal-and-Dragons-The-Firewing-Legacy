@@ -157,7 +157,7 @@ class Game:
             pygame.display.update()
             self.clock.tick(60)
 #ini merupakan ui inventory
-    def invetory(self):
+    def inventory(self):
         while True:
             INV = pygame.image.load("data/images/ui/copper_hud.png")
             INV = pygame.transform.scale(INV, (1280, 720))
@@ -203,6 +203,192 @@ class Game:
 
             pygame.display.update()
 
+
+#ini merupakan UI trainer
+    def trainer(self):
+        while True:
+            # Load and scale images
+            Train = pygame.image.load("data/images/ui/copper_hud.png")
+            Train = pygame.transform.scale(Train, (1280, 720))
+            Train_TEXT = self.get_font(25).render("Trainer", True, "#dbdbdb")
+            Train_RECT = Train_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+
+            self.screen.blit(Train, (0, 0))
+            self.screen.blit(Train_TEXT, Train_RECT)
+
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            #character
+            trainer_char = pygame.image.load("data/images/entities/NPC/Trainer/idle/Warrior_Idle_1.png")
+            trainer_char = pygame.transform.scale(trainer_char, (512,352))
+
+            #Dialogue
+            dialogue = pygame.image.load("data/images/ui/dialogue_box.png")
+            dialogue = pygame.transform.scale(dialogue, (375,150))
+
+            # Create and render the upgrade button as text-only
+            upgrade_button = Button(image=None, pos=(1050, 600), text_input="UPGRADE", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            upgrade_button.changeColor(MENU_MOUSE_POS)
+            upgrade_button.update(self.screen)
+
+            #weapon
+            weapon_box_image = pygame.image.load("data/images/ui/itembox.png")
+            weapon_box_image = pygame.transform.scale(weapon_box_image, (150, 150))
+
+            #arrow button
+            arrowright_button = Button(image=pygame.image.load("data/images/ui/right_arrow.png"), pos=(1200, 225), text_input=None, font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            arrowright_button.changeColor(MENU_MOUSE_POS)
+            arrowright_button.update(self.screen)
+
+            arrowleft_button = Button(image=pygame.image.load("data/images/ui/left_arrow.png"), pos=(500, 225), text_input=None, font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            arrowleft_button.changeColor(MENU_MOUSE_POS)
+            arrowleft_button.update(self.screen)
+
+            #coin
+            coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
+            coin_image = pygame.transform.scale(coin_image, (100, 100))
+            
+            # Render weapon slots
+            for i in range(4):
+                x = 550 + i * 150
+                y = 150
+                self.screen.blit(weapon_box_image, (x, y))
+
+            # Render selected weapon slot
+            self.screen.blit(weapon_box_image, (550, 350))
+            
+            # Render weapon stats
+            weapon_name = self.get_font(20).render("Pedank", True, (0, 0, 0))
+            weapon_damage = self.get_font(20).render("Damage: 126 + 15", True, (0, 0, 0))
+            weapon_level = self.get_font(20).render("Level: 4 + 1", True, (0, 0, 0))
+            self.screen.blit(weapon_name, (725, 380))
+            self.screen.blit(weapon_damage, (725, 410))
+            self.screen.blit(weapon_level, (725, 440))
+
+            # Render coins and upgrade button
+            self.screen.blit(coin_image, (825, 550))
+            coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
+            self.screen.blit(coin_amount, (850, 640))
+            
+            self.screen.blit(trainer_char, (70,250))
+            self.screen.blit(dialogue, (100, 145))
+            multiline_text = (
+                "Ah, a fellow warrior!\n"
+                "You've come to\n"
+                "the right place.\n"
+                "Let me forge you\n"
+                "a weapon that will make\n"
+                "your enemies tremble!"
+            )
+            lines = multiline_text.splitlines()
+            y_offset = 180
+            font = self.get_font(13)
+            for i, line in enumerate(lines):
+                text_surface = font.render(line, True, "#8c6e08")
+                self.screen.blit(text_surface, (140, y_offset + 2 + i * font.get_linesize()))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if upgrade_button.checkForInput(MENU_MOUSE_POS):
+                            print("Upgraded")
+                        if arrowright_button.checkForInput(MENU_MOUSE_POS):
+                            print("Kanan")
+                        if arrowleft_button.checkForInput(MENU_MOUSE_POS):
+                            print("Kiri")
+
+
+            pygame.display.update()
+    def merchant(self):
+        while True:
+            # Load and scale images
+            Train = pygame.image.load("data/images/ui/copper_hud.png")
+            Train = pygame.transform.scale(Train, (1280, 720))
+            Train_TEXT = self.get_font(25).render("Merchant", True, "#dbdbdb")
+            Train_RECT = Train_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+
+            self.screen.blit(Train, (0, 0))
+            self.screen.blit(Train_TEXT, Train_RECT)
+
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            #character
+            trainer_char = pygame.image.load("data/images/entities/NPC/merchant/idle/merchant.png")
+            trainer_char = pygame.transform.scale(trainer_char, (352,352))
+
+            #Dialogue
+            dialogue = pygame.image.load("data/images/ui/dialogue_box.png")
+            dialogue = pygame.transform.scale(dialogue, (375,150))
+
+            # Create and render the upgrade button as text-only
+            upgrade_button = Button(image=None, pos=(1050, 625), text_input="BUY", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            upgrade_button.changeColor(MENU_MOUSE_POS)
+            upgrade_button.update(self.screen)
+
+            #weapon
+            item_box_image = pygame.image.load("data/images/ui/itembox.png")
+            item_box_image = pygame.transform.scale(item_box_image, (150, 150))
+
+            arrowright_button = Button(image=pygame.image.load("data/images/ui/right_arrow.png"), pos=(1200, 350), text_input=None, font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            arrowright_button.changeColor(MENU_MOUSE_POS)
+            arrowright_button.update(self.screen)
+
+            arrowleft_button = Button(image=pygame.image.load("data/images/ui/left_arrow.png"), pos=(500, 350), text_input=None, font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            arrowleft_button.changeColor(MENU_MOUSE_POS)
+            arrowleft_button.update(self.screen)
+
+            #coin
+            coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
+            coin_image = pygame.transform.scale(coin_image, (80, 80))
+            
+            # Render weapon slots
+            for row in range(3):
+                for col in range(4):
+                        x = 550 + col * (150 + 0)
+                        y = 130 + row * (150 + 0)
+                        self.screen.blit(item_box_image, (x, y))
+
+            # Render coins and upgrade button
+            self.screen.blit(coin_image, (865, 580))
+            coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
+            self.screen.blit(coin_amount, (900, 650))
+            
+            self.screen.blit(trainer_char, (100,300))
+            self.screen.blit(dialogue, (100, 150))
+            multiline_text = (
+                "Welcome, traveler!\n"
+                "Step right up\n"
+                "and behold my wares—\n"
+                "only the finest goods\n"
+                "from distant lands, all\n"
+                "at unbeatable prices!"
+            )
+            lines = multiline_text.splitlines()
+            y_offset = 180
+            font = self.get_font(13)
+            for i, line in enumerate(lines):
+                text_surface = font.render(line, True, "#8c6e08")
+                self.screen.blit(text_surface, (140, y_offset + 2 + i * font.get_linesize()))
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if upgrade_button.checkForInput(MENU_MOUSE_POS):
+                            print("Bought!")
+                        if arrowright_button.checkForInput(MENU_MOUSE_POS):
+                            print("Kanan")
+                        if arrowleft_button.checkForInput(MENU_MOUSE_POS):
+                            print("Kiri")
+
+
+            pygame.display.update()
+
     def load_level(self, map_id):
         self.tilemap.load('data/maps/' + str(map_id) + '.json')
         # self.tilemap.load('map.json')
@@ -226,6 +412,7 @@ class Game:
         self.scroll = [0,0]
         self.dead = 0
         self.transition = -30
+
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
@@ -352,8 +539,8 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]:
                         if self.inv_button.checkForInput(scaled_pos):
-                            self.invetory()
-                            
+                            self.inventory()
+
             if self.transition:
                 transition_surf = pygame.Surface(self.display.get_size())
                 pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (30 - abs(self.transition)) * 8)
