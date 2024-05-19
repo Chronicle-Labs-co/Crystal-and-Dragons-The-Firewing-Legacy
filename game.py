@@ -79,7 +79,7 @@ class Game:
         
         self.level = 0
         self.load_level(self.level)
-        
+
         self.screenshake = 0
 
         self.inv_button = Button(image=self.assets['button_inventory'], pos=(self.display.get_width() - 20, self.display.get_height() - 25), 
@@ -412,6 +412,8 @@ class Game:
         self.scroll = [0,0]
         self.dead = 0
         self.transition = -30
+        self.health = 3
+
 
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
@@ -489,7 +491,10 @@ class Game:
                 elif abs(self.player.dashing < 50): # not moving in dashing
                     if self.player.rect().collidepoint(projectile[0]):
                         self.projectiles.remove(projectile)
-                        self.dead += 1
+                        if self.health > 1:
+                            self.health -= 1
+                        else:
+                            self.dead += 1
                         self.sfx['hit'].play()
                         self.screenshake = max(16, self.screenshake)
                         for i in range(30):
@@ -517,7 +522,7 @@ class Game:
                 if kill:
                     self.particles.remove(particle)
                     
-            self.inv_button.update(self.display_2)
+            self.inv_button.update(self.display)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -550,6 +555,9 @@ class Game:
                 self.display.blit(transition_surf, (0, 0))
                 
             self.display_2.blit(self.display, (0, 0))
+
+            font = self.get_font(17).render(str(self.health), True, 'black')
+            self.display_2.blit(font, (10, 10)) 
             
             self.inv_button.update(self.display)
             

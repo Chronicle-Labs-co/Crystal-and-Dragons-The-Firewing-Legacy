@@ -152,7 +152,17 @@ class Player(PhysicsEntity):
         if self.air_time > 120:
             if not self.game.dead:
                  self.game.screenshake = max(16, self.game.screenshake)
-            self.game.dead += 1
+
+            
+            if not self.wall_slide and not self.game.dead:
+                self.game.dead += 1
+            else:
+                if self.game.health > 1:
+                    self.game.health -= 1
+                    self.air_time = 0
+                else:
+                    self.game.dead += 1
+            
            
         
         if self.collisions['down']:
