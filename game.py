@@ -516,6 +516,8 @@ class Game:
                     particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3 # sin use to wave position
                 if kill:
                     self.particles.remove(particle)
+                    
+            self.inv_button.update(self.display_2)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
