@@ -157,8 +157,8 @@ class Player(PhysicsEntity):
             if not self.wall_slide and not self.game.dead:
                 self.game.dead += 1
             else:
-                if self.game.health > 1:
-                    self.game.health -= 1
+                if self.game.player_hp > 1:
+                    self.game.player_hp -= 1
                     self.air_time = 0
                 else:
                     self.game.dead += 1
@@ -236,8 +236,10 @@ class Player(PhysicsEntity):
         
     def dash(self):
         if not self.dashing:
-            self.game.sfx['dash'].play()
-            if self.flip:
-                self.dashing = -60
-            else:
-                self.dashing = 60
+            if self.game.player_mana > 0:
+                self.game.sfx['dash'].play()
+                self.game.player_mana -= 1
+                if self.flip:
+                    self.dashing = -60
+                else:
+                    self.dashing = 60

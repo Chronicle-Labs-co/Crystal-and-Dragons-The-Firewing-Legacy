@@ -3,6 +3,7 @@ import sys
 import pygame
 import random
 import math
+import time
 
 from button import Button
 from scripts.spark import Spark
@@ -26,6 +27,7 @@ class Game:
         self.clock = pygame.time.Clock()
         
         self.movement = [False, False]
+
         
         self.assets = {
             # Tile assets
@@ -49,12 +51,15 @@ class Game:
 
             # UI assets
             'button_inventory': load_image('ui/tas.png', color_key=(255,255,255), convert_alpha=True),
+            'healthbar': load_images('icons/HealthBar', is_color_key=False, convert_alpha=True),
+            'manabar': load_images('icons/Manabar', is_color_key=False, convert_alpha=True),
 
             # Particle assets
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
+            
         }
         
         self.sfx = {
@@ -80,10 +85,27 @@ class Game:
         self.level = 0
         self.load_level(self.level)
 
-        self.screenshake = 0
-
         self.inv_button = Button(image=self.assets['button_inventory'], pos=(self.display.get_width() - 20, self.display.get_height() - 25), 
                                 text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White")
+    
+    def mana_regen(self):
+        now = time.time()
+        if now - self.last_regen_time >= self.mana_regen_rate:
+            print("bisa regen")
+            if self.player_mana < 8:
+                print("regenareted")
+                self.player_mana += 1
+                self.player_mana = min(self.player_mana, 8)
+                self.last_regen_time = now
+
+    def update_health_bar(self):
+        self.health_bar = pygame.transform.scale(self.assets['healthbar'][self.player_hp], (75, 32))
+        self.display.blit(self.health_bar, (10, 10))
+
+    def update_mana_bar(self):
+        self.mana_bar = pygame.transform.scale(self.assets['manabar'][self.player_mana], (75, 32))
+        self.mana_bar = pygame.transform.flip(self.mana_bar, flip_x=True, flip_y=False)
+        self.display.blit(self.mana_bar, (self.display.get_width() - 85, 10))
 
     def options(self):
         while True:
@@ -91,12 +113,12 @@ class Game:
 
             self.screen.fill("white")
 
-            OPTIONS_TEXT = self.get_font(45).render("This is the OPTIONS screen.", True, "Black")
-            OPTIONS_RECT = OPTIONS_TEXT.get_rect(center=(640, 260))
-            self.screen.blit(OPTIONS_TEXT, OPTIONS_RECT)
+            BG = pygame.image.load("data/images/ui/tutorial.png")
+            BG = pygame.transform.scale(BG, (1280, 720))
+            self.screen.blit(BG, (0, 0))
 
-            OPTIONS_BACK = Button(image=None, pos=(640, 460), 
-                                text_input="BACK", font=self.get_font(75), base_color="Black", hovering_color="Green")
+            OPTIONS_BACK = Button(image=None, pos=(1100, 650), 
+                                text_input="BACK", font=self.get_font(75), base_color="White", hovering_color="Green")
 
             OPTIONS_BACK.changeColor(OPTIONS_MOUSE_POS)
             OPTIONS_BACK.update(self.screen)
@@ -247,6 +269,7 @@ class Game:
             #coin
             coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
             coin_image = pygame.transform.scale(coin_image, (100, 100))
+            player_coin_image = pygame.transform.scale(coin_image, (80,80))
             
             # Render weapon slots
             for i in range(4):
@@ -265,13 +288,19 @@ class Game:
             self.screen.blit(weapon_damage, (725, 410))
             self.screen.blit(weapon_level, (725, 440))
 
-            # Render coins and upgrade button
+            # Render coins cost and upgrade button
             self.screen.blit(coin_image, (825, 550))
             coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
             self.screen.blit(coin_amount, (850, 640))
+
+            #Player's coin
+            self.screen.blit(player_coin_image, (1050, 50))
+            player_coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
+            self.screen.blit(player_coin_amount, (1075, 125))
             
             self.screen.blit(trainer_char, (70,250))
             self.screen.blit(dialogue, (100, 145))
+
             multiline_text = (
                 "Ah, a fellow warrior!\n"
                 "You've come to\n"
@@ -343,6 +372,12 @@ class Game:
             #coin
             coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
             coin_image = pygame.transform.scale(coin_image, (80, 80))
+            player_coin_image = pygame.transform.scale(coin_image, (60, 60))
+
+            #player's coin
+            self.screen.blit(player_coin_image, (1050, 60))
+            player_coin_amount = self.get_font(16).render("400", True, (255, 255, 0))
+            self.screen.blit(player_coin_amount, (1075, 115))
             
             # Render weapon slots
             for row in range(3):
@@ -395,7 +430,6 @@ class Game:
         self.leaf_spawners = []
         for tree in self.tilemap.extract([('large_decor', 2)], keep=True):
             self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
-            print(self.leaf_spawners)
         
         self.enemies = []
         for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
@@ -412,9 +446,12 @@ class Game:
         self.scroll = [0,0]
         self.dead = 0
         self.transition = -30
-        self.health = 3
 
-
+        self.player_hp = 8
+        self.player_mana = 8
+        self.mana_regen_rate = 3
+        self.last_regen_time = time.time()
+        self.screenshake = 0
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
@@ -441,6 +478,7 @@ class Game:
             
             if self.dead:
                 self.dead += 1
+                self.player_hp = 8
                 if self.dead >= 10:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
@@ -469,7 +507,7 @@ class Game:
             if not self.dead:
                 self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
                 self.player.render(self.display, offset=render_scroll)
-            
+
             # calculate realtime scaled mouse position
             pos = list(pygame.mouse.get_pos())
             ratio_x = (self.screen.get_rect().width // self.display.get_rect().width)
@@ -491,17 +529,29 @@ class Game:
                 elif abs(self.player.dashing < 50): # not moving in dashing
                     if self.player.rect().collidepoint(projectile[0]):
                         self.projectiles.remove(projectile)
-                        if self.health > 1:
-                            self.health -= 1
+
+                        if self.player_hp > 1:
+                            self.player_hp -= 1
                         else:
                             self.dead += 1
+
                         self.sfx['hit'].play()
+                        if self.player_hp <= 0:
+                            self.dead += 1
+                            self.player_hp = 8
+                            
                         self.screenshake = max(16, self.screenshake)
+                        
                         for i in range(30):
                             angle = random.random() * math.pi * 2
                             speed = random.random() * 5
                             self.sparks.append(Spark(self.player.rect().center, angle, 2 + random.random()))
                             self.particles.append(Particle(self, 'particle', self.player.rect().center, velocity=[math.cos(angle + math.pi) * speed * 0.5, math.sin(angle + math.pi) * speed * 0.5], frame=random.randint(0,7)))
+            
+            if self.player_mana < 8:
+                self.mana_regen()
+            self.update_mana_bar()
+            self.update_health_bar()
 
             for spark in self.sparks.copy():
                 kill = spark.update()
@@ -521,7 +571,7 @@ class Game:
                     particle.pos[0] += math.sin(particle.animation.frame * 0.035) * 0.3 # sin use to wave position
                 if kill:
                     self.particles.remove(particle)
-                    
+
             self.inv_button.update(self.display)
 
             for event in pygame.event.get():
@@ -548,6 +598,9 @@ class Game:
                         if self.inv_button.checkForInput(scaled_pos):
                             self.inventory()
 
+            self.inv_button.update(self.display)
+            
+
             if self.transition:
                 transition_surf = pygame.Surface(self.display.get_size())
                 pygame.draw.circle(transition_surf, (255, 255, 255), (self.display.get_width() // 2, self.display.get_height() // 2), (30 - abs(self.transition)) * 8)
@@ -555,17 +608,11 @@ class Game:
                 self.display.blit(transition_surf, (0, 0))
                 
             self.display_2.blit(self.display, (0, 0))
-
-            font = self.get_font(17).render(str(self.health), True, 'black')
-            self.display_2.blit(font, (10, 10)) 
-            
-            self.inv_button.update(self.display)
             
             screenshake_offset = (random.random() * self.screenshake - self.screenshake / 2, random.random() * self.screenshake - self.screenshake / 2)
 
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
-            
-            # self.screen.blit(self.display, (0,0))
+            self.inv_button.update(self.display)
             pygame.display.update()
 
             self.clock.tick(75)
