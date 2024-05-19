@@ -205,9 +205,16 @@ class Game:
             
             #Char doctor
             Doctor_char = pygame.image.load("data/images/entities/NPC/Doctor/Sprite-0002.png")
-            Doctor_char = pygame.transform.scale(Doctor_char,(500,325))
-            self.screen.blit(Doctor_char,(30,170))
+            Doctor_char = pygame.transform.scale(Doctor_char,(500,375))
+            self.screen.blit(Doctor_char,(30,275))
+               
+            #text box doctor
+            Text_box = pygame.image.load("data/images/ui/doctor_text_box.png")
+            Text_box = pygame.transform.scale(Text_box,(400,200))
+            self.screen.blit(Text_box,(100,100))
             
+            
+            #meditate button
             meditate_button = pygame.image.load("data/images/ui/meditate_button.png")
             meditate_button = pygame.transform.scale(meditate_button,(150,50))
             
@@ -243,12 +250,14 @@ class Game:
             #meditation text
             meditation_name = self.get_font(13).render("Restore HP and MANA ", True, (0,0,0))
             self.screen.blit(meditation_name,(710,150))
+            
             multiline_text = (
                 "Find a quiet spot and sit down to meditate,\n"
                 "as you focus your mind and breathe deeply,\n"
                 "you'll feel your health and mana gradually\n"
                 "restore,bringing you back to full strength."
             )
+            
             lines = multiline_text.splitlines()
             y_offset = 170
             font = self.get_font(12)
