@@ -75,6 +75,7 @@ class Game:
             'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
             'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
             'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
+            'cat': pygame.mixer.Sound('data/sfx/cat.mp3'),
         }
         
         self.sfx['ambience'].set_volume(0.2)
@@ -82,6 +83,7 @@ class Game:
         self.sfx['hit'].set_volume(0.8)
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(1)
+        self.sfx['cat'].set_volume(0.5)
         
         self.clouds = Clouds(self.assets['clouds'], count=4)        
         
@@ -597,6 +599,8 @@ class Game:
             if self.dead:
                 self.dead += 1
                 self.player_hp = 8
+                if self.dead == 2:
+                    self.sfx['cat'].play()
                 if self.dead >= 10:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
