@@ -8,7 +8,7 @@ import time
 from button import Button
 from scripts.spark import Spark
 from scripts.utils import load_image, load_images, Animation
-from scripts.entities import PhysicsEntity, Player, Enemy
+from scripts.entities import NPC, PhysicsEntity, Player, Enemy
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -51,6 +51,9 @@ class Game:
             'player/slide': Animation(load_images('entities/player/slide')),
             'player/wall_slide': Animation(load_images('entities/player/wall_slide')),
             'player/jump': Animation(load_images('entities/player/jump')),
+            'doctor/idle': Animation(load_images('entities/NPC/Doctor')),
+            'merchant/idle': Animation(load_images('entities/NPC/merchant/idle', convert_alpha=True)),
+            'trainer/idle': Animation(load_images('entities/NPC/Trainer/idle')),
 
 
             # UI assets
@@ -437,12 +440,19 @@ class Game:
             self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
         
         self.enemies = []
-        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1)]):
-            if spawner['variant'] == 0:
+        self.npcs = []
+        for spawner in self.tilemap.extract([('spawners', 0), ('spawners', 1), ('spawners', 2), ('spawners', 3), ('spawners', 4)]):
+            if spawner['variant'] == 0: # Player
                 self.player.pos = spawner['pos']
                 self.player.air_time = 0
-            else:
+            if spawner['variant'] == 1: # Enemy
                 self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
+            if spawner['variant'] == 2: # Doctor
+                self.npcs.append(NPC(self, 'doctor', spawner['pos'], (8, 15)))
+            if spawner['variant'] == 3: # Merchant
+                self.npcs.append(NPC(self, 'merchant', spawner['pos'], (8, 15)))
+            if spawner['variant'] == 4: # Trainer
+                self.npcs.append(NPC(self, 'trainer', spawner['pos'], (8, 15)))
             
         self.projectiles = []
         self.particles = []
@@ -607,6 +617,9 @@ class Game:
                 enemy.render(self.display, offset=render_scroll)
                 if kill:
                     self.enemies.remove(enemy)
+                    
+            for npc in self.npcs.copy():
+                npc.render(self.display, offset=render_scroll)
             
             if not self.dead:
                 self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))

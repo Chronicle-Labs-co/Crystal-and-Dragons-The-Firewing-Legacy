@@ -136,6 +136,16 @@ class Enemy(PhysicsEntity):
         else:
             surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
         
+class NPC(PhysicsEntity):
+    def __init__(self, game, e_type, pos, size):
+        super().__init__(game, e_type, pos, size)     
+        
+    def update(self, tilemap, movement=(0,0)):
+        super().update(tilemap, movement=movement)
+        
+    def render(self, surf, offset=(0,0)):
+        super().render(surf, offset=offset)
+        
 class Player(PhysicsEntity):
     def __init__(self, game, pos, size):
         super().__init__(game, 'player', pos, size)
