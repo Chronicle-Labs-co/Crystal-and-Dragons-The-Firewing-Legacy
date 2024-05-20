@@ -16,7 +16,7 @@ class Game:
     def __init__(self):
         pygame.init()
 
-        pygame.display.set_caption("C")
+        pygame.display.set_caption("C&D")
         
         self.screen = pygame.display.set_mode((1280, 720))
         
@@ -45,8 +45,8 @@ class Game:
             'player/slide': Animation(load_images('entities/player/slide')),
             'player/wall_slide': Animation(load_images('entities/player/wall_slide')),
             'player/jump': Animation(load_images('entities/player/jump')),
-
-
+            
+            
             # UI assets
             'button_inventory': load_image('ui/tas.png', color_key=(255,255,255), convert_alpha=True),
 
@@ -146,8 +146,8 @@ class Game:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]:
-                        if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                            self.game_on()
+                        if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS): 
+                            self.character_select()
                         if OPTIONS_BUTTON.checkForInput(MENU_MOUSE_POS):
                             self.options()
                         if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
@@ -226,7 +226,41 @@ class Game:
         self.scroll = [0,0]
         self.dead = 0
         self.transition = -30
+    
+        
+    def character_select(self):
+        while True:
+            BG = pygame.image.load(os.path.join("data", "images", "ui", "bg-menu.png"))
+            BG = pygame.transform.scale(BG, (1280, 720))
+            self.screen.blit(BG, (0, 0))
 
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            char1_img = pygame.image.load(os.path.join("data", "images", "entities", "char1", "idle", "1.png"))
+            char1_img_rect = char1_img.get_rect(center=(400, 360))
+            self.screen.blit(char1_img, char1_img_rect)
+
+            char2_img = pygame.image.load(os.path.join("data", "images", "entities", "char2", "idle", "01_idle1.png"))
+            char2_img_rect = char2_img.get_rect(center=(800, 360))
+            self.screen.blit(char2_img, char2_img_rect)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if char1_img_rect.collidepoint(MENU_MOUSE_POS):
+                        self.selected_character = 'char1'
+                        self.game_on()  
+                    elif char2_img_rect.collidepoint(MENU_MOUSE_POS):
+                        self.selected_character = 'char2'
+                        self.game_on()  
+
+            pygame.display.update()
+
+                      
+            
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
         pygame.mixer.music.load('data/music.wav')
@@ -318,7 +352,7 @@ class Game:
                     self.sparks.remove(spark)
                     
             display_mask = pygame.mask.from_surface(self.display)
-            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 180), unsetcolor=(0, 0, 0, 0))
+            display_sillhouette = display_mask.to_surface(setcolor=(0, 0, 0, 0), unsetcolor=(0, 0, 0, 0))
             for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 self.display_2.blit(display_sillhouette, offset)
                         

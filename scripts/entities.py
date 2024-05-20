@@ -33,6 +33,9 @@ class PhysicsEntity:
     def update(self, tilemap, movement=(0,0)):
         self.collisions = {'up': False, 'down': False, 'right': False, 'left': False}
         frame_movement = (movement[0] + self.velocity[0], movement[1] + self.velocity[1])
+        
+        if self.type == 'player':
+            print(self.pos)
 
         self.pos[0] += frame_movement[0]
         entity_rect = self.rect()
@@ -137,7 +140,7 @@ class Enemy(PhysicsEntity):
             surf.blit(self.game.assets['gun'], (self.rect().centerx + 4 - offset[0], self.rect().centery - offset[1]))
         
 class Player(PhysicsEntity):
-    def __init__(self, game, pos, size):
+    def __init__(self, game, pos, size): 
         super().__init__(game, 'player', pos, size)
         self.air_time = 0
         self.jumps = 1

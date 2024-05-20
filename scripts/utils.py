@@ -12,12 +12,12 @@ def load_image(path, color_key=(0,0,0), convert_alpha=False):
     return img
 
 
-def load_images(path):
+def load_images(path, color_key=(0,0,0), convert_alpha=False):
     images = []
     
     # it's not work for linux!
     for img_name in sorted(os.listdir(BASE_IMG_PATH + path)):
-        images.append(load_image(path + '/' + img_name))
+        images.append(load_image(path + '/' + img_name, color_key=color_key, convert_alpha=convert_alpha))
         
     return images
 
