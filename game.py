@@ -23,6 +23,8 @@ class Game:
         
         self.display = pygame.Surface((320, 240), pygame.SRCALPHA)
         self.display_2 = pygame.Surface((320, 240))
+        self.display_3 = pygame.Surface((320, 240))
+        self.display_4 = pygame.Surface((320, 240))
 
         self.clock = pygame.time.Clock()
         
@@ -36,7 +38,9 @@ class Game:
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'player' : load_image('entities/player.png'),
-            'background': load_image('background.png'),
+            'background': load_image('background1.png'),
+            'background2': load_image('background2.png', convert_alpha=True),
+            'background3': load_image('background3.png', convert_alpha=True),
             'clouds': load_images('clouds'),
 
             # Entity assets
@@ -76,7 +80,7 @@ class Game:
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(1)
         
-        self.clouds = Clouds(self.assets['clouds'], count=16)        
+        self.clouds = Clouds(self.assets['clouds'], count=4)        
         
         self.player = Player(self, (50,50), (8, 15))
         
@@ -84,6 +88,7 @@ class Game:
         
         self.level = 0
         self.load_level(self.level)
+
 
         self.inv_button = Button(image=self.assets['button_inventory'], pos=(self.display.get_width() - 20, self.display.get_height() - 25), 
                                 text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White")
@@ -108,7 +113,8 @@ class Game:
         self.display.blit(self.mana_bar, (self.display.get_width() - 85, 10))
 
     def options(self):
-        while True:
+        options_active = True
+        while options_active:
             OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
             self.screen.fill("white")
@@ -129,8 +135,7 @@ class Game:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                        self.run()
-
+                        options_active = False
             pygame.display.update()      
 
     def get_font(self,size): # Returns Press-Start-2P in the desired size
@@ -198,7 +203,7 @@ class Game:
             box_image = pygame.image.load("data/images/ui/itembox.png")
             box_image = pygame.transform.scale(box_image, (150,150))
 
-            char_inv = pygame.image.load("data/images/entities/player/idle/00.png")
+            char_inv = pygame.image.load("data/images/entities/player/idle/__Idle1.png")
             char_inv = pygame.transform.scale(char_inv, (200,350))
 
             for event in pygame.event.get():
@@ -453,6 +458,155 @@ class Game:
         self.last_regen_time = time.time()
         self.screenshake = 0
 
+#ini merupakan UI 
+    def doctor(self):
+        while True:
+            #load bg image
+            DCTR = pygame.image.load("data/images/ui/copper_hud.png")
+            DCTR = pygame.transform.scale(DCTR,(1280,720))
+            DCTR_TEXT = self.get_font(25).render("Doctor", True, "#dbdbdb")
+            DCTR_RECT = DCTR_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+            
+            self.screen.blit(DCTR,(0,0))
+            self.screen.blit(DCTR_TEXT, DCTR_RECT)
+            
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+            
+            #Char doctor
+            Doctor_char = pygame.image.load("data/images/entities/NPC/Doctor/Sprite-0002.png")
+            Doctor_char = pygame.transform.scale(Doctor_char,(500,375))
+            self.screen.blit(Doctor_char,(30,275))
+               
+            #text box doctor
+            Text_box = pygame.image.load("data/images/ui/doctor_text_box.png")
+            Text_box = pygame.transform.scale(Text_box,(400,200))
+            self.screen.blit(Text_box,(100,100))
+            
+            
+            #meditate button
+            meditate_button = pygame.image.load("data/images/ui/meditate_button.png")
+            meditate_button = pygame.transform.scale(meditate_button,(150,50))
+            
+            #meditation button
+            meditation_button = Button(image=meditate_button, pos=(620, 175), text_input="Meditate", font=self.get_font(15), base_color="#d7fcd4", hovering_color="White")
+            meditation_button.changeColor(MENU_MOUSE_POS)
+            meditation_button.update(self.screen)            
+            
+            #buy button
+            buy_button = Button(image=None, pos=(1050, 620), text_input="Buy", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            buy_button.changeColor(MENU_MOUSE_POS)
+            buy_button.update(self.screen)
+            
+            #weapon box
+            weapon_box_image = pygame.image.load("data/images/ui/itembox.png")
+            weapon_box_image = pygame.transform.scale(weapon_box_image, (150, 150))
+            
+            #text-box doctor
+            
+            #nama doctor
+            
+            #coin
+            coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
+            coin_image = pygame.transform.scale(coin_image, (100, 100))
+            
+            #box potion
+            for i in range(4):
+                x = 550 + i * 150
+                y = 240
+                self.screen.blit(weapon_box_image, (x, y))
+            
+            
+            #meditation text
+            meditation_name = self.get_font(13).render("Restore HP and MANA ", True, (0,0,0))
+            self.screen.blit(meditation_name,(710,150))
+            
+            multiline_text = (
+                "Find a quiet spot and sit down to meditate,\n"
+                "as you focus your mind and breathe deeply,\n"
+                "you'll feel your health and mana gradually\n"
+                "restore,bringing you back to full strength."
+            )
+            
+            lines = multiline_text.splitlines()
+            y_offset = 170
+            font = self.get_font(12)
+            for i, line in enumerate(lines):
+                text_surface = font.render(line, True, (0,0,0))
+                self.screen.blit(text_surface, (710, y_offset + i * font.get_linesize()))
+            
+            #potion spec
+            meditation_spec = pygame.image.load("data/images/ui/health_potion.png")
+            meditation_spec = pygame.transform.scale(meditation_spec,(600,150))
+            
+            self.screen.blit(meditation_spec,(550,400))
+            #potion text
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if meditation_button.checkForInput(MENU_MOUSE_POS):
+                            self.meditate()
+                        if buy_button.checkForInput(MENU_MOUSE_POS):
+                            self.buy_potion()
+
+            pygame.display.update()           
+
+    def pause(self):
+        pause_menu = True
+        while pause_menu:
+            BG = pygame.image.load("data/images/ui/pause-menu.png")
+            BG = pygame.transform.scale(BG, (1280, 720))
+            self.screen.blit(BG, (0, 0))
+
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            RESUME_BUTTON = Button(image=None, pos=(640 , 240), text_input="RESUME", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            RESUME_BUTTON.changeColor(MENU_MOUSE_POS)
+            RESUME_BUTTON.update(self.screen)
+
+            TUTORIAL_BUTTON = Button(image=None, pos=(640 , 320), text_input="TUTORIAL", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            TUTORIAL_BUTTON.changeColor(MENU_MOUSE_POS)
+            TUTORIAL_BUTTON.update(self.screen)
+
+            EXIT_TO_MENU_BUTTON = Button(image=None, pos=(640 , 400), text_input="EXIT TO MENU", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            EXIT_TO_MENU_BUTTON.changeColor(MENU_MOUSE_POS)
+            EXIT_TO_MENU_BUTTON.update(self.screen)
+
+            EXIT_TO_DESKTOP_BUTTON = Button(image=None, pos=(640 , 480), text_input="EXIT TO DESKTOP", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            EXIT_TO_DESKTOP_BUTTON.changeColor(MENU_MOUSE_POS)
+            EXIT_TO_DESKTOP_BUTTON.update(self.screen)
+
+            MUTE_BUTTON = Button(image=None, pos=(1100 , 650), text_input="MUTE", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            MUTE_BUTTON.changeColor(MENU_MOUSE_POS)
+            MUTE_BUTTON.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.game_on()
+                        if TUTORIAL_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.options()
+                        if EXIT_TO_MENU_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.run()
+                        if EXIT_TO_DESKTOP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            pygame.quit()
+                            sys.exit()
+                        if MUTE_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            for i in self.sfx.keys():
+                                self.sfx[i].set_volume(0)
+                            pygame.mixer.music.set_volume(0)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pause_menu = False
+
+            pygame.display.update()   
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
         pygame.mixer.music.load('data/music.wav')
@@ -462,9 +616,15 @@ class Game:
         self.sfx['ambience'].play(-1)
         
         while True:
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
+            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+            
             self.display.fill((0, 0, 0, 0))
 
-            self.display_2.blit(self.assets['background'], (0,0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background'],(320, 240)), (0, 0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background2'],(320, 240)), (0, 0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background3'],(320, 240)), (0, 0))
             
             self.screenshake = max(0, self.screenshake - 1)
             
@@ -483,10 +643,6 @@ class Game:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
                     self.load_level(self.level)
-
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
-            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
-            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             for rect in self.leaf_spawners:
                 if random.random() * 49999 < rect.width * rect.height:
@@ -553,6 +709,8 @@ class Game:
             self.update_mana_bar()
             self.update_health_bar()
 
+            self.update_health_bar()
+
             for spark in self.sparks.copy():
                 kill = spark.update()
                 spark.render(self.display, offset=render_scroll)
@@ -588,6 +746,8 @@ class Game:
                             self.sfx['jump'].play()
                     if event.key == pygame.K_x:
                         self.player.dash()
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = False
@@ -599,7 +759,6 @@ class Game:
                             self.inventory()
 
             self.inv_button.update(self.display)
-            
 
             if self.transition:
                 transition_surf = pygame.Surface(self.display.get_size())
@@ -608,11 +767,12 @@ class Game:
                 self.display.blit(transition_surf, (0, 0))
                 
             self.display_2.blit(self.display, (0, 0))
-            
+
             screenshake_offset = (random.random() * self.screenshake - self.screenshake / 2, random.random() * self.screenshake - self.screenshake / 2)
 
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
             self.inv_button.update(self.display)
+
             pygame.display.update()
 
             self.clock.tick(75)
