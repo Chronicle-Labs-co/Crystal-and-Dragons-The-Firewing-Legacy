@@ -236,8 +236,10 @@ class Player(PhysicsEntity):
         
     def dash(self):
         if not self.dashing:
-            self.game.sfx['dash'].play()
-            if self.flip:
-                self.dashing = -60
-            else:
-                self.dashing = 60
+            if self.game.player_mana > 0:
+                self.game.sfx['dash'].play()
+                self.game.player_mana -= 1
+                if self.flip:
+                    self.dashing = -60
+                else:
+                    self.dashing = 60
