@@ -15,8 +15,9 @@ AUTOTILE_MAP = {
 }
 
 NEIGHBOR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (0, 0), (-1, 1), (0, 1), (1, 1)]
-PHYSICS_TILES = {'grass', 'stone'}
+PHYSICS_TILES = {'grass', 'stone', 'doctor/idle', 'merchant/idle', 'trainer/idle'}
 AUTOTILE_TYPES = {'grass', 'stone'}
+INTERACT_TYPES = {'doctor/idle', 'merchant/idle', 'trainer/idle'}
 
 class Tilemap:
     def __init__(self, game, tile_size=16):
@@ -32,6 +33,14 @@ class Tilemap:
             check_loc = str(tile_loc[0] + offset[0]) + ';' + str(tile_loc[1] + offset[1])
             if check_loc in self.tilemap:
                 tiles.append(self.tilemap[check_loc])
+        return tiles
+    
+    def offgrid_tiles_around(self, pos):
+        tiles = []
+        tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
+        check_loc = str(tile_loc[0]) + ';' + str(tile_loc[1])
+        if check_loc in self.offgrid_tiles:
+            tiles.append(self.offgrid_tiles[check_loc])
         return tiles
     
     def extract(self, id_pairs, keep=False):
