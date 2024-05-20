@@ -46,20 +46,24 @@ class Game:
             # Entity assets
             'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
             'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
+            'player': load_image('entities/player/idle/__Idle1.png'),
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/slide': Animation(load_images('entities/player/slide')),
             'player/wall_slide': Animation(load_images('entities/player/wall_slide')),
             'player/jump': Animation(load_images('entities/player/jump')),
-            'doctor/idle': Animation(load_images('entities/NPC/Doctor')),
+            'doctor/idle': Animation(load_images('entities/NPC/Doctor'), img_dur=12),
             'merchant/idle': Animation(load_images('entities/NPC/merchant/idle', convert_alpha=True)),
-            'trainer/idle': Animation(load_images('entities/NPC/Trainer/idle')),
+            'merchant': load_image('entities/NPC/merchant/idle/shop_anim_ver2_.png', convert_alpha=True),
+            'trainer': load_image('entities/NPC/Trainer/idle/Warrior_Idle_1.png'),
+            'trainer/idle': Animation(load_images('entities/NPC/Trainer/idle'), img_dur=8),
 
 
             # UI assets
             'button_inventory': load_image('ui/tas.png', color_key=(255,255,255), convert_alpha=True),
             'healthbar': load_images('icons/HealthBar', is_color_key=False, convert_alpha=True),
             'manabar': load_images('icons/Manabar', is_color_key=False, convert_alpha=True),
+            'e_button': load_image('ui/e_button.png', is_color_key=False, convert_alpha=True),
 
             # Particle assets
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
@@ -208,7 +212,7 @@ class Game:
             box_image = pygame.image.load("data/images/ui/itembox.png")
             box_image = pygame.transform.scale(box_image, (150,150))
 
-            char_inv = pygame.image.load("data/images/entities/player/idle/00.png")
+            char_inv = self.assets['player']
             char_inv = pygame.transform.scale(char_inv, (200,350))
 
             for event in pygame.event.get():
@@ -355,8 +359,7 @@ class Game:
             MENU_MOUSE_POS = pygame.mouse.get_pos()
 
             #character
-            trainer_char = pygame.image.load("data/images/entities/NPC/merchant/idle/merchant.png")
-            trainer_char = pygame.transform.scale(trainer_char, (352,352))
+            trainer_char = pygame.transform.scale(self.assets['merchant'], (352,352))
 
             #Dialogue
             dialogue = pygame.image.load("data/images/ui/dialogue_box.png")
@@ -469,6 +472,9 @@ class Game:
         self.mana_regen_rate = 3
         self.last_regen_time = time.time()
         self.screenshake = 0
+        
+        self.show_interact_button = False
+        self.current_interact = ''
 
 #ini merupakan UI 
     def doctor(self):
@@ -622,7 +628,14 @@ class Game:
                 if kill:
                     self.enemies.remove(enemy)
                     
-            for npc in self.npcs.copy():
+            self.show_interact_button = False
+            self.current_interact = ''
+            for index, npc in enumerate(self.npcs.copy()):
+                if self.player.rect().colliderect(npc.rect()):
+                    self.show_interact_button = True
+                    self.current_interact = npc.type
+                    
+                npc.update(self.tilemap, (0, 0))
                 npc.render(self.display, offset=render_scroll)
             
             if not self.dead:
@@ -674,7 +687,9 @@ class Game:
             self.update_mana_bar()
             self.update_health_bar()
 
-            self.update_health_bar()
+            if self.show_interact_button:
+                self.e_button = pygame.transform.scale(self.assets['e_button'], (10, 10))
+                self.display.blit(self.e_button, (self.player.pos[0] - render_scroll[0], self.player.pos[1] - render_scroll[1] - 20))
 
             for spark in self.sparks.copy():
                 kill = spark.update()
@@ -711,6 +726,13 @@ class Game:
                             self.sfx['jump'].play()
                     if event.key == pygame.K_x:
                         self.player.dash()
+                    if event.key == pygame.K_e:
+                        if self.current_interact == 'doctor':
+                            self.doctor()
+                        if self.current_interact == 'trainer':
+                            self.trainer()
+                        if self.current_interact == 'merchant':
+                            self.merchant()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = False
