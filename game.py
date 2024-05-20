@@ -1,4 +1,3 @@
-import os
 import sys
 import pygame
 import random
@@ -6,9 +5,8 @@ import math
 import time
 
 from button import Button
-from scripts.spark import Spark
 from scripts.utils import load_image, load_images, Animation
-from scripts.entities import PhysicsEntity, Player, Enemy
+from scripts.entities import PhysicsEntity, Player
 from scripts.tilemap import Tilemap
 from scripts.clouds import Clouds
 from scripts.particle import Particle
@@ -21,13 +19,11 @@ class Game:
         
         self.screen = pygame.display.set_mode((1280, 720))
         
-        self.display = pygame.Surface((320, 240), pygame.SRCALPHA)
-        self.display_2 = pygame.Surface((320, 240))
+        self.display = pygame.Surface((320, 240))
 
         self.clock = pygame.time.Clock()
         
         self.movement = [False, False]
-
         
         self.assets = {
             # Tile assets
@@ -39,9 +35,7 @@ class Game:
             'background': load_image('background.png'),
             'clouds': load_images('clouds'),
 
-            # Entity assets
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
+            # Player assets
             'player/idle': Animation(load_images('entities/player/idle'), img_dur=6),
             'player/run': Animation(load_images('entities/player/run'), img_dur=4),
             'player/slide': Animation(load_images('entities/player/slide')),
@@ -55,32 +49,26 @@ class Game:
             'manabar': load_images('icons/Manabar', is_color_key=False, convert_alpha=True),
 
             # Particle assets
-            'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
-            'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
-            'gun': load_image('gun.png'),
-            'projectile': load_image('projectile.png'),
-            
+            'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False)
+
         }
-        
-        self.sfx = {
-            'jump': pygame.mixer.Sound('data/sfx/jump.wav'),
-            'dash': pygame.mixer.Sound('data/sfx/dash.wav'),
-            'hit': pygame.mixer.Sound('data/sfx/hit.wav'),
-            'shoot': pygame.mixer.Sound('data/sfx/shoot.wav'),
-            'ambience': pygame.mixer.Sound('data/sfx/ambience.wav'),
-        }
-        
-        self.sfx['ambience'].set_volume(0.2)
-        self.sfx['shoot'].set_volume(0.4)
-        self.sfx['hit'].set_volume(0.8)
-        self.sfx['dash'].set_volume(0.3)
-        self.sfx['jump'].set_volume(1)
         
         self.clouds = Clouds(self.assets['clouds'], count=16)        
         
         self.player = Player(self, (50,50), (8, 15))
         
         self.tilemap = Tilemap(self, tile_size=16)
+        self.tilemap.load('map.json')
+
+        self.leaf_spawners = []
+        for tree in self.tilemap.extract([('large_decor', 2)], keep=True):
+            self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
+            print(self.leaf_spawners)
+            
+        self.particles = []
+
+        self.scroll = [0,0]
+
         
         self.level = 0
         self.load_level(self.level)
@@ -161,7 +149,6 @@ class Game:
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
             
-            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -225,7 +212,6 @@ class Game:
 
             pygame.display.update()
 
-
 #ini merupakan UI trainer
     def trainer(self):
         while True:
@@ -269,7 +255,6 @@ class Game:
             #coin
             coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
             coin_image = pygame.transform.scale(coin_image, (100, 100))
-            player_coin_image = pygame.transform.scale(coin_image, (80,80))
             
             # Render weapon slots
             for i in range(4):
@@ -288,19 +273,13 @@ class Game:
             self.screen.blit(weapon_damage, (725, 410))
             self.screen.blit(weapon_level, (725, 440))
 
-            # Render coins cost and upgrade button
+            # Render coins and upgrade button
             self.screen.blit(coin_image, (825, 550))
             coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
             self.screen.blit(coin_amount, (850, 640))
-
-            #Player's coin
-            self.screen.blit(player_coin_image, (1050, 50))
-            player_coin_amount = self.get_font(20).render("400", True, (255, 255, 0))
-            self.screen.blit(player_coin_amount, (1075, 125))
             
             self.screen.blit(trainer_char, (70,250))
             self.screen.blit(dialogue, (100, 145))
-
             multiline_text = (
                 "Ah, a fellow warrior!\n"
                 "You've come to\n"
@@ -372,12 +351,6 @@ class Game:
             #coin
             coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
             coin_image = pygame.transform.scale(coin_image, (80, 80))
-            player_coin_image = pygame.transform.scale(coin_image, (60, 60))
-
-            #player's coin
-            self.screen.blit(player_coin_image, (1050, 60))
-            player_coin_amount = self.get_font(16).render("400", True, (255, 255, 0))
-            self.screen.blit(player_coin_amount, (1075, 115))
             
             # Render weapon slots
             for row in range(3):
@@ -455,14 +428,7 @@ class Game:
 
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
-        pygame.mixer.music.load('data/music.wav')
-        pygame.mixer.music.set_volume(0.5)
-        pygame.mixer.music.play(-1)
-        
-        self.sfx['ambience'].play(-1)
-        
         while True:
-            self.display.fill((0, 0, 0, 0))
 
             self.display_2.blit(self.assets['background'], (0,0))
             
@@ -483,6 +449,7 @@ class Game:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
                     self.load_level(self.level)
+            self.display.blit(self.assets['background'], (0,0))
 
             self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
             self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
@@ -494,7 +461,7 @@ class Game:
                     self.particles.append(Particle(self, 'leaf', pos, velocity=[-0.1, 0.3], frame=random.randint(0, 20)))
             
             self.clouds.update()
-            self.clouds.render(self.display_2, render_scroll)
+            self.clouds.render(self.display, render_scroll)
             
             self.tilemap.render(self.display, offset=render_scroll)
             
@@ -508,6 +475,9 @@ class Game:
                 self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
                 self.player.render(self.display, offset=render_scroll)
 
+            self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
+            self.player.render(self.display, offset=render_scroll)
+            
             # calculate realtime scaled mouse position
             pos = list(pygame.mouse.get_pos())
             ratio_x = (self.screen.get_rect().width // self.display.get_rect().width)
@@ -564,6 +534,7 @@ class Game:
             for offset in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
                 self.display_2.blit(display_sillhouette, offset)
                         
+
             for particle in self.particles.copy():
                 kill = particle.update()
                 particle.render(self.display, offset=render_scroll)
@@ -584,10 +555,7 @@ class Game:
                     if event.key == pygame.K_RIGHT  or event.key == pygame.K_d:
                         self.movement[1] = True
                     if event.key == pygame.K_UP  or event.key == pygame.K_w:
-                        if self.player.jump():
-                            self.sfx['jump'].play()
-                    if event.key == pygame.K_x:
-                        self.player.dash()
+                        self.player.jump()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.movement[0] = False
@@ -598,6 +566,7 @@ class Game:
                         if self.inv_button.checkForInput(scaled_pos):
                             self.inventory()
 
+            
             self.inv_button.update(self.display)
             
 
@@ -613,6 +582,9 @@ class Game:
 
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
             self.inv_button.update(self.display)
+            self.screen.blit(pygame.transform.scale(self.display, self.screen.get_size()), (0,0))
+            
+            # self.screen.blit(self.display, (0,0))
             pygame.display.update()
 
             self.clock.tick(75)
