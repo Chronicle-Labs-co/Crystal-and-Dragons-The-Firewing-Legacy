@@ -140,8 +140,10 @@ class NPC(PhysicsEntity):
     def __init__(self, game, e_type, pos, size):
         super().__init__(game, e_type, pos, size)     
         
-    def update(self, tilemap, movement=(0,0)):
+    def update(self, tilemap, movement=(0,0)):        
         super().update(tilemap, movement=movement)
+        
+        
         
     def render(self, surf, offset=(0,0)):
         super().render(surf, offset=offset)
@@ -155,6 +157,9 @@ class Player(PhysicsEntity):
         self.dashing = 0
         
     def update(self, tilemap, movement=(0,0)):
+        for tile in tilemap.offgrid_tiles_around(self.pos):
+            print(tile)
+            
         super().update(tilemap, movement=movement)
 
         self.air_time += 1
