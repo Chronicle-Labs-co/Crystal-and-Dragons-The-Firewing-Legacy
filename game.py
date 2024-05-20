@@ -122,7 +122,8 @@ class Game:
         self.display.blit(self.mana_bar, (self.display.get_width() - 85, 10))
 
     def options(self):
-        while True:
+        options_active = True
+        while options_active:
             OPTIONS_MOUSE_POS = pygame.mouse.get_pos()
 
             self.screen.fill("white")
@@ -143,8 +144,7 @@ class Game:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if OPTIONS_BACK.checkForInput(OPTIONS_MOUSE_POS):
-                        self.run()
-
+                        options_active = False
             pygame.display.update()      
 
     def get_font(self,size): # Returns Press-Start-2P in the desired size
@@ -212,7 +212,10 @@ class Game:
             box_image = pygame.image.load("data/images/ui/itembox.png")
             box_image = pygame.transform.scale(box_image, (150,150))
 
+            char_inv = pygame.image.load("data/images/entities/player/idle/__Idle1.png")
+
             char_inv = self.assets['player']
+
             char_inv = pygame.transform.scale(char_inv, (200,350))
 
             for event in pygame.event.get():
@@ -571,8 +574,60 @@ class Game:
                             self.buy_potion()
 
             pygame.display.update()           
-            
-            
+
+    def pause(self):
+        pause_menu = True
+        while pause_menu:
+            BG = pygame.image.load("data/images/ui/pause-menu.png")
+            BG = pygame.transform.scale(BG, (1280, 720))
+            self.screen.blit(BG, (0, 0))
+
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+
+            RESUME_BUTTON = Button(image=None, pos=(640 , 240), text_input="RESUME", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            RESUME_BUTTON.changeColor(MENU_MOUSE_POS)
+            RESUME_BUTTON.update(self.screen)
+
+            TUTORIAL_BUTTON = Button(image=None, pos=(640 , 320), text_input="TUTORIAL", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            TUTORIAL_BUTTON.changeColor(MENU_MOUSE_POS)
+            TUTORIAL_BUTTON.update(self.screen)
+
+            EXIT_TO_MENU_BUTTON = Button(image=None, pos=(640 , 400), text_input="EXIT TO MENU", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            EXIT_TO_MENU_BUTTON.changeColor(MENU_MOUSE_POS)
+            EXIT_TO_MENU_BUTTON.update(self.screen)
+
+            EXIT_TO_DESKTOP_BUTTON = Button(image=None, pos=(640 , 480), text_input="EXIT TO DESKTOP", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            EXIT_TO_DESKTOP_BUTTON.changeColor(MENU_MOUSE_POS)
+            EXIT_TO_DESKTOP_BUTTON.update(self.screen)
+
+            MUTE_BUTTON = Button(image=None, pos=(1100 , 650), text_input="MUTE", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            MUTE_BUTTON.changeColor(MENU_MOUSE_POS)
+            MUTE_BUTTON.update(self.screen)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.game_on()
+                        if TUTORIAL_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.options()
+                        if EXIT_TO_MENU_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            self.run()
+                        if EXIT_TO_DESKTOP_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            pygame.quit()
+                            sys.exit()
+                        if MUTE_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            for i in self.sfx.keys():
+                                self.sfx[i].set_volume(0)
+                            pygame.mixer.music.set_volume(0)
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pause_menu = False
+
+            pygame.display.update()   
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
         pygame.mixer.music.load('data/music.wav')
@@ -726,6 +781,8 @@ class Game:
                             self.sfx['jump'].play()
                     if event.key == pygame.K_x:
                         self.player.dash()
+                    if event.key == pygame.K_ESCAPE:
+                        self.pause()
                     if event.key == pygame.K_e:
                         if self.current_interact == 'doctor':
                             self.doctor()
