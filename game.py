@@ -443,6 +443,103 @@ class Game:
 
 
 
+#ini merupakan UI 
+    def doctor(self):
+        while True:
+            #load bg image
+            DCTR = pygame.image.load("data/images/ui/copper_hud.png")
+            DCTR = pygame.transform.scale(DCTR,(1280,720))
+            DCTR_TEXT = self.get_font(25).render("Doctor", True, "#dbdbdb")
+            DCTR_RECT = DCTR_TEXT.get_rect(center = (self.screen.get_rect().width //2, 100))
+            
+            self.screen.blit(DCTR,(0,0))
+            self.screen.blit(DCTR_TEXT, DCTR_RECT)
+            
+            MENU_MOUSE_POS = pygame.mouse.get_pos()
+            
+            #Char doctor
+            Doctor_char = pygame.image.load("data/images/entities/NPC/Doctor/Sprite-0002.png")
+            Doctor_char = pygame.transform.scale(Doctor_char,(500,375))
+            self.screen.blit(Doctor_char,(30,275))
+               
+            #text box doctor
+            Text_box = pygame.image.load("data/images/ui/doctor_text_box.png")
+            Text_box = pygame.transform.scale(Text_box,(400,200))
+            self.screen.blit(Text_box,(100,100))
+            
+            
+            #meditate button
+            meditate_button = pygame.image.load("data/images/ui/meditate_button.png")
+            meditate_button = pygame.transform.scale(meditate_button,(150,50))
+            
+            #meditation button
+            meditation_button = Button(image=meditate_button, pos=(620, 175), text_input="Meditate", font=self.get_font(15), base_color="#d7fcd4", hovering_color="White")
+            meditation_button.changeColor(MENU_MOUSE_POS)
+            meditation_button.update(self.screen)            
+            
+            #buy button
+            buy_button = Button(image=None, pos=(1050, 620), text_input="Buy", font=self.get_font(30), base_color="#d7fcd4", hovering_color="White")
+            buy_button.changeColor(MENU_MOUSE_POS)
+            buy_button.update(self.screen)
+            
+            #weapon box
+            weapon_box_image = pygame.image.load("data/images/ui/itembox.png")
+            weapon_box_image = pygame.transform.scale(weapon_box_image, (150, 150))
+            
+            #text-box doctor
+            
+            #nama doctor
+            
+            #coin
+            coin_image = pygame.image.load("data/images/items/weapons/coins/coin_1.png")
+            coin_image = pygame.transform.scale(coin_image, (100, 100))
+            
+            #box potion
+            for i in range(4):
+                x = 550 + i * 150
+                y = 240
+                self.screen.blit(weapon_box_image, (x, y))
+            
+            
+            #meditation text
+            meditation_name = self.get_font(13).render("Restore HP and MANA ", True, (0,0,0))
+            self.screen.blit(meditation_name,(710,150))
+            
+            multiline_text = (
+                "Find a quiet spot and sit down to meditate,\n"
+                "as you focus your mind and breathe deeply,\n"
+                "you'll feel your health and mana gradually\n"
+                "restore,bringing you back to full strength."
+            )
+            
+            lines = multiline_text.splitlines()
+            y_offset = 170
+            font = self.get_font(12)
+            for i, line in enumerate(lines):
+                text_surface = font.render(line, True, (0,0,0))
+                self.screen.blit(text_surface, (710, y_offset + i * font.get_linesize()))
+            
+            #potion spec
+            meditation_spec = pygame.image.load("data/images/ui/health_potion.png")
+            meditation_spec = pygame.transform.scale(meditation_spec,(600,150))
+            
+            self.screen.blit(meditation_spec,(550,400))
+            #potion text
+            
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if meditation_button.checkForInput(MENU_MOUSE_POS):
+                            self.meditate()
+                        if buy_button.checkForInput(MENU_MOUSE_POS):
+                            self.buy_potion()
+
+            pygame.display.update()           
+            
+            
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
         pygame.mixer.music.load('data/music.wav')
