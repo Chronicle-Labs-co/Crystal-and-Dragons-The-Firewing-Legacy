@@ -22,6 +22,8 @@ class Game:
         
         self.display = pygame.Surface((320, 240), pygame.SRCALPHA)
         self.display_2 = pygame.Surface((320, 240))
+        self.display_3 = pygame.Surface((320, 240))
+        self.display_4 = pygame.Surface((320, 240))
 
         self.clock = pygame.time.Clock()
         
@@ -35,7 +37,9 @@ class Game:
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone'),
             'player' : load_image('entities/player.png'),
-            'background': load_image('background.png'),
+            'background': load_image('background1.png'),
+            'background2': load_image('background2.png', convert_alpha=True),
+            'background3': load_image('background3.png', convert_alpha=True),
             'clouds': load_images('clouds'),
 
             # Entity assets
@@ -73,7 +77,7 @@ class Game:
         self.sfx['dash'].set_volume(0.3)
         self.sfx['jump'].set_volume(1)
         
-        self.clouds = Clouds(self.assets['clouds'], count=16)        
+        self.clouds = Clouds(self.assets['clouds'], count=4)        
         
         self.player = Player(self, (50,50), (8, 15))
         
@@ -549,9 +553,15 @@ class Game:
         self.sfx['ambience'].play(-1)
         
         while True:
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
+            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+            
             self.display.fill((0, 0, 0, 0))
 
-            self.display_2.blit(self.assets['background'], (0,0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background'],(320, 240)), (0, 0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background2'],(320, 240)), (0, 0))
+            self.display_2.blit(pygame.transform.scale(self.assets['background3'],(320, 240)), (0, 0))
             
             self.screenshake = max(0, self.screenshake - 1)
             
@@ -570,10 +580,6 @@ class Game:
                     self.transition = min(30, self.transition + 1)
                 if self.dead > 40:
                     self.load_level(self.level)
-
-            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
-            self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
-            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
             for rect in self.leaf_spawners:
                 if random.random() * 49999 < rect.width * rect.height:
@@ -695,9 +701,6 @@ class Game:
                 
             self.display_2.blit(self.display, (0, 0))
 
-            # font = self.get_font(17).render(str(self.health), True, 'black')
-            # self.display_2.blit(font, (10, 10)) 
-            
             screenshake_offset = (random.random() * self.screenshake - self.screenshake / 2, random.random() * self.screenshake - self.screenshake / 2)
 
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
