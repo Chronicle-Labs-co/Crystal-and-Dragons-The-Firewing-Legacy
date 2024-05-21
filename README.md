@@ -59,9 +59,9 @@ python main.py
 ```
 
 ## UML Diagram
-<img src="data/images/src/uml.png" style="width: 320px;"/>
+<img src="data/images/uml.png" style="width: 320px;"/>
 
 ## Screenshots
-<img src="data/images/src/Tampilan game.png" style="width: 320px;"/>
-<img src="data/images/src/tutorial.png" style="width: 320px;"/>
-<img src="data/images/src/tampilanmenu.png" style="width: 320px;"/>
+<img src="data/images/Tampilan game.png" style="width: 320px;"/>
+<img src="data/images/tutorial.png" style="width: 320px;"/>
+<img src="data/images/tampilanmenu.png" style="width: 320px;"/>
