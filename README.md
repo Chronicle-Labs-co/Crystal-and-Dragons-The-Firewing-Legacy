@@ -42,9 +42,13 @@ that played by 1 player. This game is about exploring fantasy dungeon
 <li> Install Python 3.6 or higher</li>
 <li> Install python-pip or python3-pip</li>
 Open terminal where you want to clone the repository and run the following command:
+
 ```
-Code here
+git clone https://github.com/Chronicle-Labs-co/Crystal-and-Dragons-The-Firewing-Legacy.git
+cd Crystal-and-Dragons-The-Firewing-Legacy
 ```
+
+
 
 ## Running the game with Pygame
 <li> Install Python 3.6 or higher</li>
