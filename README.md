@@ -27,7 +27,7 @@ Crystal and Dragons: The Firewing Legacy is a Pixelated Role-Playing Game create
 | Name | NIM | Role | Github |
 | :---: | :---: | :---: | :---: |
 | Cornelius Linux                   | 122140079 | Project Lead + Programmer                      | [Krossmanzs](https://github.com/Krossmanzs) |
-| A. Edwin Krisandika Putra   | 122140003 | Programmer                           | [aloisiusedwin](https://github.com/aloisiusedwin) |
+| A. Edwin Krisandika Putra   | 122140003 | Programmer + Designer                          | [aloisiusedwin](https://github.com/aloisiusedwin) |
 | Rizki Alfariz Ramadhan       | 122140061 | Programmer + Designer                          | [Alfariz11](https://github.com/Alfariz11)    |
 | Abyan King Al Baihaqy       | 122140063 | Designer                          | [Binnn05](https://github.com/Binnn05) |
 | Aziz Kurniawan                   | 122140097 | Programmer + Designer | [Aziz097](https://github.com/Aziz097) |
@@ -35,7 +35,7 @@ Crystal and Dragons: The Firewing Legacy is a Pixelated Role-Playing Game create
 
 ## Introduction Game
 Crystal and Dargons: The Firewing Legacy is a 2 dimentional pixelated Role-Playing Game
-that played by 1 player. This game is about exploring fantasy dungeon 
+that played by 1 player. This game is about exploring fantasy dungeon where the world encountered by players is very different from the ordinary world. This world is filled with various kinds of plants, rocks, and creatures that players don't recognize. These creatures threaten the player's survival where players can fight and overcome every obstacle that exists. Players can collect currency in this game where players can spend it to buy new weapons, upgrade the weapons used and buy potions that can buff player attributes.
 
 
 ## Instalation Steps
