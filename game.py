@@ -225,7 +225,7 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if pygame.mouse.get_pressed()[0]:
                         if RESUME_BUTTON.checkForInput(MENU_MOUSE_POS):
-                            self.game_on()
+                            return
 
             self.screen.blit(char_inv, (150,150))
 
@@ -345,6 +345,9 @@ class Game:
                             print("Kanan")
                         if arrowleft_button.checkForInput(MENU_MOUSE_POS):
                             print("Kiri")
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
 
 
             pygame.display.update()
@@ -436,6 +439,9 @@ class Game:
                             print("Kanan")
                         if arrowleft_button.checkForInput(MENU_MOUSE_POS):
                             print("Kiri")
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
 
 
             pygame.display.update()
@@ -478,6 +484,8 @@ class Game:
         
         self.show_interact_button = False
         self.current_interact = ''
+        
+        self.muted = False
 
 #ini merupakan UI 
     def doctor(self):
@@ -572,6 +580,9 @@ class Game:
                             self.meditate()
                         if buy_button.checkForInput(MENU_MOUSE_POS):
                             self.buy_potion()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
 
             pygame.display.update()           
 
@@ -622,7 +633,12 @@ class Game:
                         if MUTE_BUTTON.checkForInput(MENU_MOUSE_POS):
                             for i in self.sfx.keys():
                                 self.sfx[i].set_volume(0)
-                            pygame.mixer.music.set_volume(0)
+                            if not self.muted:
+                                pygame.mixer.music.set_volume(0)
+                                self.muted = True
+                            else:
+                                pygame.mixer.music.set_volume(100)
+                                self.muted = False
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         pause_menu = False
@@ -630,8 +646,8 @@ class Game:
             pygame.display.update()   
 #Kalo play di main menu dipencet, bakal ngerun ini buat ke gameplay
     def game_on(self):
-        pygame.mixer.music.load('data/music.wav')
-        pygame.mixer.music.set_volume(0.5)
+        pygame.mixer.music.load('data/sfx/music.ogg')
+        pygame.mixer.music.set_volume(1)
         pygame.mixer.music.play(-1)
         
         self.sfx['ambience'].play(-1)
