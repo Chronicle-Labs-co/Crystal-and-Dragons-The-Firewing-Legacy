@@ -64,6 +64,7 @@ class Game:
             'healthbar': load_images('icons/HealthBar', is_color_key=False, convert_alpha=True),
             'manabar': load_images('icons/Manabar', is_color_key=False, convert_alpha=True),
             'e_button': load_image('ui/e_button.png', is_color_key=False, convert_alpha=True),
+            'terimakasih': load_image('ui/terimakasih.jpg'),
 
             # Particle assets
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
@@ -486,6 +487,31 @@ class Game:
         self.current_interact = ''
         
         self.muted = False
+    
+    def next_level(self):
+        if self.level < 2:
+            self.level += 1
+            self.load_level(self.level)
+        else:
+            self.win()
+            
+    def win(self):
+        while True:
+            # Load and scale images
+            Train = pygame.transform.scale(self.assets['terimakasih'], (1280, 720))
+
+            self.screen.blit(Train, (0, 0))
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        return
+
+
+            pygame.display.update()
+        
 
 #ini merupakan UI 
     def doctor(self):
@@ -668,8 +694,9 @@ class Game:
             if not len(self.enemies):
                 self.transition += 1
                 if self.transition > 30:
-                    self.level = min(self.level + 1, len(os.listdir('data/maps')) - 1)
-                    self.load_level(self.level)
+                    # self.level = min(self.level + 1, len(os.listdir('data/maps')) - 1)
+                    # self.load_level(self.level)
+                    self.next_level()
             if self.transition < 0:
                 self.transition += 1
             
@@ -797,6 +824,8 @@ class Game:
                             self.sfx['jump'].play()
                     if event.key == pygame.K_x:
                         self.player.dash()
+                    if event.key == pygame.K_p:
+                        self.next_level()
                     if event.key == pygame.K_ESCAPE:
                         self.pause()
                     if event.key == pygame.K_e:
