@@ -42,24 +42,26 @@ that played by 1 player. This game is about exploring fantasy dungeon
 <li> Install Python 3.6 or higher</li>
 <li> Install python-pip or python3-pip</li>
 Open terminal where you want to clone the repository and run the following command:
-
+```
 Code here
-
+```
 
 ## Running the game with Pygame
 <li> Install Python 3.6 or higher</li>
 Run the following command to start the game:
 
-
+```
 python3 main.py
-
+```
 alternative command:
-
+```
 python main.py
-
+```
 
 ## UML Diagram
-(Add UML Diagram here)
+<img src="data/images/src/uml.png" style="width: 320px;"/>
 
 ## Screenshots
-(Add Screenshots here)
+<img src="data/images/src/Tampilan game.png" style="width: 320px;"/>
+<img src="data/images/src/tutorial.png" style="width: 320px;"/>
+<img src="data/images/src/tampilanmenu.png" style="width: 320px;"/>
