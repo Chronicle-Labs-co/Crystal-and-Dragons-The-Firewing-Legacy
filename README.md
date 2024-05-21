@@ -64,4 +64,4 @@ python main.py
 ## Screenshots
 <img src="data/images/Tampilan game.png" style="width: 320px;"/>
 <img src="data/images/tutorial.png" style="width: 320px;"/>
-<img src="data/images/tampilanmenu.png" style="width: 320px;"/>
+<img src="data/images/tampilanmenu.jpg" style="width: 320px;"/>
