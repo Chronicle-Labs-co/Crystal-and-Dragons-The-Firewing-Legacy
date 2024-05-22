@@ -65,12 +65,16 @@ class Game:
             'manabar': load_images('icons/Manabar', is_color_key=False, convert_alpha=True),
             'e_button': load_image('ui/e_button.png', is_color_key=False, convert_alpha=True),
             'terimakasih': load_image('ui/terimakasih.jpg'),
+            'button_weapon_potion': load_image('ui/itembox2.png', color_key=(255,255,255), convert_alpha=True),
 
             # Particle assets
             'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
             'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
             'gun': load_image('gun.png'),
             'projectile': load_image('projectile.png'),
+            
+            # Waepon Assets
+            'weapon': load_images('items/weapons/weapon', is_color_key=False, convert_alpha=True),
             
         }
         
@@ -102,7 +106,13 @@ class Game:
 
         self.inv_button = Button(image=self.assets['button_inventory'], pos=(self.display.get_width() - 20, self.display.get_height() - 25), 
                                 text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White")
-    
+        
+        self.weapon_button = Button(image=self.assets['button_weapon_potion'], pos=(self.display.get_width() - 135, self.display.get_height() - 25), 
+                                text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White") 
+        
+        self.potion_button = Button(image=self.assets['button_weapon_potion'], pos=(self.display.get_width() - 170, self.display.get_height() - 25), 
+                                text_input="", font=self.get_font(7), base_color="#d7fcd4", hovering_color="White") 
+        
     def mana_regen(self):
         now = time.time()
         if now - self.last_regen_time >= self.mana_regen_rate:
@@ -193,6 +203,8 @@ class Game:
 
             pygame.display.update()
             self.clock.tick(60)
+
+
 #ini merupakan ui inventory
     def inventory(self):
         while True:
@@ -809,6 +821,8 @@ class Game:
                     self.particles.remove(particle)
 
             self.inv_button.update(self.display)
+            self.weapon_button.update(self.display)
+            self.potion_button.update(self.display)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -844,8 +858,20 @@ class Game:
                     if pygame.mouse.get_pressed()[0]:
                         if self.inv_button.checkForInput(scaled_pos):
                             self.inventory()
+                #ini ini logic button weapon
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if self.weapon_button.checkForInput(scaled_pos):
+                            self.inventory()
+                #ini logic button potion
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if pygame.mouse.get_pressed()[0]:
+                        if self.potion_button.checkForInput(scaled_pos):
+                            self.inventory()
 
             self.inv_button.update(self.display)
+            self.weapon_button.update(self.display)
+            self.potion_button.update(self.display)
 
             if self.transition:
                 transition_surf = pygame.Surface(self.display.get_size())
@@ -859,6 +885,8 @@ class Game:
 
             self.screen.blit(pygame.transform.scale(self.display_2, self.screen.get_size()), screenshake_offset)
             self.inv_button.update(self.display)
+            self.weapon_button.update(self.display)
+            self.potion_button.update(self.display)
 
             pygame.display.update()
 
