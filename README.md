@@ -63,7 +63,7 @@ python main.py
 ```
 
 ## UML Diagram
-<img src="data/images/uml.png" style="width: 320px;"/>
+<img src="data/images/uml.jpg" style="width: 320px;"/>
 
 ## Screenshots
 <img src="data/images/Tampilan game.png" style="width: 320px;"/>
